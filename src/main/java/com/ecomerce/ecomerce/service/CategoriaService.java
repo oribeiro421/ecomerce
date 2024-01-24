@@ -1,8 +1,12 @@
 package com.ecomerce.ecomerce.service;
 
+import com.ecomerce.ecomerce.dto.CategoriaDTO;
 import com.ecomerce.ecomerce.model.Categoria;
 import com.ecomerce.ecomerce.model.Produto;
+import com.ecomerce.ecomerce.model.exception.ResourceNotFoundException;
 import com.ecomerce.ecomerce.repository.CategoriaRepository;
+import org.jetbrains.annotations.NotNull;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,19 +19,35 @@ public class CategoriaService {
     @Autowired
     private CategoriaRepository categoriaRepository;
 
-    public List<Categoria> obterTodos(){
-        return categoriaRepository.findAll();
+    public List<CategoriaDTO> obterTodos(){
+        List<Categoria> categorias = categoriaRepository.findAll();
+        return categorias.stream().map(categoria -> new ModelMapper().map(categoria, CategoriaDTO.class)).toList();
     }
-    public Optional<Categoria> obterPorId(Long id){
-        return categoriaRepository.findById(id);
+    public Optional<CategoriaDTO> obterPorId(Long id){
+        Optional<Categoria> categoria = categoriaRepository.findById(id);
+        if (categoria.isEmpty()){
+            throw new ResourceNotFoundException("Produto com id:" + id + " não encontrado");
+        }
+        CategoriaDTO categoriaDTO = new ModelMapper().map(categoria, CategoriaDTO.class);
+        return Optional.of(categoriaDTO);
     }
-    public Categoria adicionar(Categoria categoria){
-        return categoriaRepository.save(categoria);
+    public CategoriaDTO adicionar(CategoriaDTO categoriaDTO){
+        Categoria categoria = new ModelMapper().map(categoriaDTO, Categoria.class);
+        categoriaRepository.save(categoria);
+        categoriaDTO.setId(categoria.getId());
+        return categoriaDTO;
     }
-    public Categoria atualizar(Long id, Categoria categoria){
-        return categoriaRepository.save(categoria);
+    public CategoriaDTO atualizar(Long id, @NotNull CategoriaDTO categoriaDTO){
+        categoriaDTO.setId(id);
+        Categoria categoria = new ModelMapper().map(categoriaDTO, Categoria.class);
+        categoriaRepository.save(categoria);
+        return categoriaDTO;
     }
     public void deletar(Long id){
+        Optional<Categoria> categoria = categoriaRepository.findById(id);
+        if (categoria.isEmpty()){
+            throw new ResourceNotFoundException("Não foi possivel deletar esse produto");
+        }
         categoriaRepository.deleteById(id);
     }
 }

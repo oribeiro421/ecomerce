@@ -1,4 +1,4 @@
-package com.ecomerce.ecomerce.shared;
+package com.ecomerce.ecomerce.dto;
 
 import com.ecomerce.ecomerce.model.Categoria;
 import com.ecomerce.ecomerce.model.ItemPedido;

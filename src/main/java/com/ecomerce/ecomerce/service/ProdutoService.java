@@ -3,11 +3,10 @@ package com.ecomerce.ecomerce.service;
 import com.ecomerce.ecomerce.model.Produto;
 import com.ecomerce.ecomerce.model.exception.ResourceNotFoundException;
 import com.ecomerce.ecomerce.repository.ProdutoRepository;
-import com.ecomerce.ecomerce.shared.ProdutoDTO;
+import com.ecomerce.ecomerce.dto.ProdutoDTO;
 import org.jetbrains.annotations.NotNull;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -33,18 +32,15 @@ public class ProdutoService {
         ProdutoDTO dto = new ModelMapper().map(produto.get(), ProdutoDTO.class);
         return Optional.of(dto);
     }
-    public ProdutoDTO adicionar(@NotNull ProdutoDTO produtoDto){
-        produtoDto.setId(null);
-        ModelMapper mapper = new ModelMapper();
-        Produto produto = mapper.map(produtoDto, Produto.class);
+    public ProdutoDTO adicionar(ProdutoDTO produtoDto){
+        Produto produto = new ModelMapper().map(produtoDto, Produto.class);
         produto = produtoRepository.save(produto);
         produtoDto.setId(produto.getId());
         return produtoDto;
     }
-    public ProdutoDTO atualizar(Long id, ProdutoDTO produtoDto){
+    public ProdutoDTO atualizar(Long id, @NotNull ProdutoDTO produtoDto){
         produtoDto.setId(id);
-        ModelMapper mapper = new ModelMapper();
-        Produto produto = mapper.map(produtoDto, Produto.class);
+        Produto produto = new ModelMapper().map(produtoDto, Produto.class);
         produtoRepository.save(produto);
         return produtoDto;
     }
