@@ -1,8 +1,14 @@
 package com.ecomerce.ecomerce.view.controller;
 
+import com.ecomerce.ecomerce.dto.EnderecoDTO;
 import com.ecomerce.ecomerce.model.Endereco;
 import com.ecomerce.ecomerce.service.EnderecoService;
+import com.ecomerce.ecomerce.view.model.EnderecoRequest;
+import com.ecomerce.ecomerce.view.model.EnderecoResponse;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,23 +22,30 @@ public class EnderecoController {
     private EnderecoService enderecoService;
 
     @GetMapping
-    public List<Endereco> obterTodos(){
-        return enderecoService.obterTodos();
+    public ResponseEntity<List<EnderecoResponse>> obterTodos(){
+        List<EnderecoDTO> enderecoDTOS = enderecoService.obterTodos();
+        return new ResponseEntity<>(enderecoDTOS.stream().map(enderecoDTO -> new ModelMapper().map(enderecoDTO, EnderecoResponse.class)).toList(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
-    public Optional<Endereco> obterPorId(@PathVariable Long id){
-        return enderecoService.obterPorId(id);
+    public ResponseEntity<Optional<EnderecoResponse>> obterPorId(@PathVariable Long id){
+        Optional<EnderecoDTO> enderecoDTO = enderecoService.obterPorId(id);
+        return new ResponseEntity<>(Optional.of(new ModelMapper().map(enderecoDTO.get(),EnderecoResponse.class)), HttpStatus.OK);
     }
     @PostMapping
-    public Endereco adicionar(@RequestBody Endereco endereco){
-        return enderecoService.adicionar(endereco);
+    public ResponseEntity<EnderecoResponse> adicionar(@RequestBody EnderecoRequest enderecoRequest){
+        EnderecoDTO enderecoDTO = new ModelMapper().map(enderecoRequest, EnderecoDTO.class);
+        enderecoDTO = enderecoService.adicionar(enderecoDTO);
+        return new ResponseEntity<>(new ModelMapper().map(enderecoDTO, EnderecoResponse.class), HttpStatus.CREATED);
     }
     @PutMapping("/{id}")
-    public Endereco atualizar(@PathVariable Long id, @RequestBody Endereco endereco){
-        return enderecoService.atualizar(id, endereco);
+    public ResponseEntity<EnderecoResponse> atualizar(@PathVariable Long id, @RequestBody EnderecoRequest enderecoRequest){
+        EnderecoDTO enderecoDTO = new ModelMapper().map(enderecoRequest, EnderecoDTO.class);
+        enderecoDTO = enderecoService.atualizar(id, enderecoDTO);
+        return new ResponseEntity<>(new ModelMapper().map(enderecoDTO, EnderecoResponse.class), HttpStatus.OK);
     }
     @DeleteMapping("/{id}")
-    public void deletar(@PathVariable Long id){
+    public ResponseEntity<?> deletar(@PathVariable Long id){
         enderecoService.deletar(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

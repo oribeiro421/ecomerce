@@ -25,15 +25,13 @@ public class ProdutoController {
     public ResponseEntity<List<ProdutoResponse>> obterTodos(){
 
         List<ProdutoDTO> produtos = produtoService.obterTodos();
-        List<ProdutoResponse> produtoResponse = produtos.stream().map(produtoDTO -> new ModelMapper().map(produtoDTO, ProdutoResponse.class)).toList();
-        return new ResponseEntity<>(produtoResponse, HttpStatus.OK);
+        return new ResponseEntity<>(produtos.stream().map(produtoDTO -> new ModelMapper().map(produtoDTO, ProdutoResponse.class)).toList(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Optional<ProdutoResponse>> obterPorId(@PathVariable Long id){
 
         Optional<ProdutoDTO> produtoDTO = produtoService.obterPorId(id);
-        ProdutoResponse produtoResponse = new ModelMapper().map(produtoDTO.get(), ProdutoResponse.class);
-        return new ResponseEntity<>(Optional.of(produtoResponse), HttpStatus.OK);
+        return new ResponseEntity<>(Optional.of(new ModelMapper().map(produtoDTO.get(), ProdutoResponse.class)), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<ProdutoResponse> adicionar(@RequestBody ProdutoRequest produtoReq){

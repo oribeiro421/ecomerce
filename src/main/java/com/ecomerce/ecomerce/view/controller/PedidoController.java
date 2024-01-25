@@ -24,14 +24,12 @@ public class PedidoController {
     @GetMapping
     public ResponseEntity<List<PedidoResponse>> obterTodos(){
         List<PedidoDTO> pedidoDTOS = pedidoService.obterTodos();
-        List<PedidoResponse> pedidoResponses = pedidoDTOS.stream().map(pedidoDTO -> new ModelMapper().map(pedidoDTO, PedidoResponse.class)).toList();
-        return new ResponseEntity<>(pedidoResponses, HttpStatus.OK);
+        return new ResponseEntity<>(pedidoDTOS.stream().map(pedidoDTO -> new ModelMapper().map(pedidoDTO, PedidoResponse.class)).toList(), HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<Optional<PedidoResponse>> obterPorId(@PathVariable Long id){
         Optional<PedidoDTO> pedidoDTO = pedidoService.obterPorId(id);
-        PedidoResponse pedidoResponse = new ModelMapper().map(pedidoDTO.get(), PedidoResponse.class);
-        return new ResponseEntity<>(Optional.of(pedidoResponse),HttpStatus.OK);
+        return new ResponseEntity<>(Optional.of(new ModelMapper().map(pedidoDTO.get(), PedidoResponse.class)),HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<PedidoResponse> adicionar(@RequestBody PedidoRequest pedidoRequest){
