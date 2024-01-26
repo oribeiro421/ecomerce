@@ -1,9 +1,11 @@
 package com.ecomerce.ecomerce.view.controller;
 
 import com.ecomerce.ecomerce.dto.AuthenticationDTO;
+import com.ecomerce.ecomerce.dto.LoginResponseDto;
 import com.ecomerce.ecomerce.dto.RegisterDTO;
 import com.ecomerce.ecomerce.model.user.Usuario;
 import com.ecomerce.ecomerce.repository.UserRepository;
+import com.ecomerce.ecomerce.security.TokenService;
 import org.apache.catalina.User;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,17 +28,21 @@ public class AuthenticationController {
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private TokenService tokenService;
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Valid @NotNull AuthenticationDTO data){
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.password());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        return new ResponseEntity<>(HttpStatus.OK);
+        var token = tokenService.generateToken((Usuario) auth.getPrincipal());
+
+        return new ResponseEntity<>(new LoginResponseDto(token), HttpStatus.OK);
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterDTO data){
+    public ResponseEntity<?> register(@RequestBody @Valid @NotNull RegisterDTO data){
         if (this.userRepository.findByLogin(data.login()) != null) return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(data.password());

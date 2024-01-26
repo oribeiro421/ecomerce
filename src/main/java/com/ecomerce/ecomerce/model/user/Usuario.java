@@ -8,7 +8,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.List;
 
-@Entity
+@Table(name = "users")
+@Entity(name = "users")
 public class Usuario implements UserDetails {
 
     @Id
@@ -55,11 +56,11 @@ public class Usuario implements UserDetails {
         this.nome = nome;
     }
 
-    public String getEmail() {
+    public String getLogin() {
         return login;
     }
 
-    public void setEmail(String login) {
+    public void setLogin(String login) {
         this.login = login;
     }
 
@@ -109,4 +110,5 @@ public class Usuario implements UserDetails {
     public void setRole(UserRole role) {
         this.role = role;
     }
+
 }
