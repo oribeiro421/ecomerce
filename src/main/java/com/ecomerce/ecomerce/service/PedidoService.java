@@ -20,8 +20,6 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
-
-
     public List<PedidoDTO> obterTodos(){
         List<Pedido> pedidos = pedidoRepository.findAll();
         return pedidos.stream().map(pedido -> new ModelMapper().map(pedido, PedidoDTO.class)).toList();
