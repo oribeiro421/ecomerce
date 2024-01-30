@@ -23,13 +23,13 @@ public class EmailConfig {
 
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
 
-        mailSender.setHost(env.getProperty("mail.smtp.host"));
-        Integer port = env.getProperty("mail.smtp.port", Integer.class);
+        mailSender.setHost(env.getProperty("spring.mail.host"));
+        Integer port = env.getProperty("spring.mail.port", Integer.class);
         if (port != null) {
             mailSender.setPort(port);
         }
-        mailSender.setUsername(env.getProperty("mail.smtp.username"));
-        mailSender.setUsername(env.getProperty("mail.smtp.password"));
+        mailSender.setUsername(env.getProperty("spring.mail.username"));
+        mailSender.setUsername(env.getProperty("spring.mail.password"));
 
         Properties props = mailSender.getJavaMailProperties();
 
