@@ -24,6 +24,7 @@ public class Pedido {
     public Pedido(){
 
     }
+
     public Pedido(Long id, Date data, Cliente cliente, List<ItemPedido> itens, Double descontoTotal, Double valorTotal) {
         this.id = id;
         this.data = data;

@@ -1,7 +1,8 @@
 package com.ecomerce.ecomerce.service;
 
 import com.ecomerce.ecomerce.dto.PedidoDTO;
-import com.ecomerce.ecomerce.dto.ProdutoDTO;
+import com.ecomerce.ecomerce.email.Email;
+import com.ecomerce.ecomerce.email.EmailService;
 import com.ecomerce.ecomerce.model.Pedido;
 import com.ecomerce.ecomerce.model.exception.ResourceNotFoundException;
 import com.ecomerce.ecomerce.repository.PedidoRepository;
@@ -20,6 +21,12 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
+    private final EmailService emailService;
+
+    public PedidoService(EmailService emailService){
+        this.emailService = emailService;
+    }
+
     public List<PedidoDTO> obterTodos(){
         List<Pedido> pedidos = pedidoRepository.findAll();
         return pedidos.stream().map(pedido -> new ModelMapper().map(pedido, PedidoDTO.class)).toList();
@@ -36,6 +43,13 @@ public class PedidoService {
         Pedido pedidos = new ModelMapper().map(pedidoDTO, Pedido.class);
         pedidos = pedidoRepository.save(pedidos);
         pedidoDTO.setId(pedidos.getId());
+
+        String assunto = "Confirmação de pedido";
+        String mensagem = "Seu pedido foi criado com sucesso";
+        String destinatario = pedidoDTO.getCliente().getEmail();
+        Email email = new Email(assunto, mensagem, destinatario);
+        emailService.sendEmail(email);
+
         return pedidoDTO;
     }
     public PedidoDTO atualizar(Long id, @NotNull PedidoDTO pedidoDTO){
