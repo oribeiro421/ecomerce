@@ -21,11 +21,6 @@ public class PedidoService {
     @Autowired
     private PedidoRepository pedidoRepository;
 
-    private final EmailService emailService;
-
-    public PedidoService(EmailService emailService){
-        this.emailService = emailService;
-    }
 
     public List<PedidoDTO> obterTodos(){
         List<Pedido> pedidos = pedidoRepository.findAll();
@@ -43,13 +38,6 @@ public class PedidoService {
         Pedido pedidos = new ModelMapper().map(pedidoDTO, Pedido.class);
         pedidos = pedidoRepository.save(pedidos);
         pedidoDTO.setId(pedidos.getId());
-
-        String assunto = "Confirmação de pedido";
-        String mensagem = "Seu pedido foi criado com sucesso";
-        String destinatario = pedidoDTO.getCliente().getEmail();
-        Email email = new Email(assunto, mensagem, destinatario);
-        emailService.sendEmail(email);
-
         return pedidoDTO;
     }
     public PedidoDTO atualizar(Long id, @NotNull PedidoDTO pedidoDTO){

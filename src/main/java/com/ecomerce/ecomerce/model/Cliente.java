@@ -1,5 +1,6 @@
 package com.ecomerce.ecomerce.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -21,6 +22,7 @@ public class Cliente {
     private Endereco enderecos;
 
     @OneToMany(mappedBy = "cliente")
+    @JsonBackReference
     private List<Pedido> pedidos;
 
     public Cliente(){

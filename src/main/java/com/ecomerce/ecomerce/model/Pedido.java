@@ -1,5 +1,6 @@
 package com.ecomerce.ecomerce.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.Date;
